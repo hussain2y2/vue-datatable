@@ -1,6 +1,6 @@
 {
   "name": "server-datatable",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "keywords": ["table", "datatable", "vue-datatable", "server-datatable"],
   "description": "Vue DataTables common package.",
   "private": false,
