@@ -4,7 +4,8 @@
       <div class="col-sm-12 col-md-6" v-if="pageOption">
         <div class="dataTables_length">
           <label>Show
-            <select name="length" @change="setPerPage($event)" v-model="perPage" class="custom-select custom-select-sm form-control form-control-sm">
+            <select name="length" @change="setPerPage($event)" v-model="perPage"
+                    class="custom-select custom-select-sm form-control form-control-sm">
               <option v-for="(option, key) in pageOptions" :key="key" :value="option">{{ option }}</option>
             </select> entries
           </label>
@@ -13,7 +14,8 @@
       <div class="col-sm-12 col-md-6" v-if="enableSearch">
         <div class="dataTables_filter">
           <label>Search:
-            <input type="search" @keyup="setSearchText($event)" v-model="searchText" class="form-control form-control-sm">
+            <input type="search" @keyup="setSearchText($event)" v-model="searchText"
+                   class="form-control form-control-sm">
           </label>
         </div>
       </div>
@@ -62,7 +64,7 @@
               <a href="javascript:" @click.prevent="changePage(activePage - 1)" class="page-link">Previous</a>
             </li>
             <li class="paginate_button page-item" v-for="(page, index) in pages" :key="index"
-              :class="{'active': page === pagination.meta.current_page}">
+                :class="{'active': page === pagination.meta.current_page}">
               <a href="javascript:" @click.prevent="changePage(page)" class="page-link">{{ page }}</a>
             </li>
             <li class="paginate_button page-item next" :class="{'disabled': activePage === pagination.meta.last_page }">
@@ -76,6 +78,8 @@
 </template>
 
 <script>
+    import axios from 'axios';
+
     export default {
         name: 'DataTable',
         props: {
@@ -175,7 +179,7 @@
                         this.pagination = data;
                         this.tableData = data.data;
                     }).catch(error => {
-                   console.log(error.response.data);
+                    console.log(error.response.data);
                 });
             },
         },
