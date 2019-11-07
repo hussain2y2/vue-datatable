@@ -22,3 +22,9 @@ All notable changes to this package will be documented in this file.
 ## Changes
 
 - CHANGELOG version linked.
+
+## [0.1.8 - 07-11-2019](https://www.npmjs.com/package/server-datatable/v/0.1.8)
+
+## Changes
+
+- src and public directories included.
