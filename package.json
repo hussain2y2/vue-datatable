@@ -1,10 +1,24 @@
 {
-  "name": "vue-datatable",
-  "version": "0.1.0",
-  "private": true,
+  "name": "server-datatable",
+  "version": "0.1.6",
+  "keywords": ["table", "datatable", "vue-datatable", "server-datatable"],
+  "description": "Vue DataTables common package.",
+  "private": false,
+  "author": "Hussain Ahmad <engrhussainahmad@gmail.com>",
+  "repository": {
+    "url": "git@github.com:hussain2y2/vue-datatable.git",
+    "type": "git"
+  },
+  "main": "./dist/datatable.common.js",
+  "files": [
+    "dist/*",
+    "*.json",
+    "*.js"
+  ],
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "build-bundle": "vue-cli-service build --target lib --name datatable ./src/components/index.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
