@@ -27,4 +27,10 @@ All notable changes to this package will be documented in this file.
 
 ### Dynamic Data
 
-- Server Side Rendering .
+- Server Side Rendering.
+
+## [1.0.1 - 07-11-2019](https://www.npmjs.com/package/server-datatable/v/1.0.1)
+
+### Bug Fixing
+
+- Fixing Axios Bug.

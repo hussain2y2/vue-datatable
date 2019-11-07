@@ -53,7 +53,7 @@
     <div class="row">
       <div class="col-sm-12 col-md-5" v-if="tableData.length > 0">
         <div class="dataTables_info" role="status">
-          Showing 1 to 10 of 57 entries
+          Showing {{ pagination.meta.from }} to {{ pagination.meta.to }} of {{ pagination.meta.total }} entries
         </div>
       </div>
       <div class="col-sm-12 col-md-7">
