@@ -178,16 +178,11 @@
                     .then(({data}) => {
                         this.pagination = data;
                         this.tableData = data.data;
-                    }).catch(error => {
-                    console.log(error.response.data);
-                });
+                    })
             },
         },
         filters: {
             columnHead(value) {
-                if (value === 'is_active') {
-                    return 'status'.toUpperCase();
-                }
                 return value.split('_').join(' ').toUpperCase()
             }
         }
