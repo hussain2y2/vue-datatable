@@ -1,22 +1,19 @@
 <template>
   <div class="dataTables_wrapper dt-bootstrap4">
     <div class="row">
-      <div class="col-sm-12 col-md-6">
+      <div class="col-sm-12 col-md-6" v-if="pageOption">
         <div class="dataTables_length">
           <label>Show
-            <select name="length" class="custom-select custom-select-sm form-control form-control-sm">
-              <option value="10">10</option>
-              <option value="25">25</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
+            <select name="length" @change="setPerPage($event)" v-model="perPage" class="custom-select custom-select-sm form-control form-control-sm">
+              <option v-for="(option, key) in pageOptions" :key="key" :value="option">{{ option }}</option>
             </select> entries
           </label>
         </div>
       </div>
-      <div class="col-sm-12 col-md-6">
+      <div class="col-sm-12 col-md-6" v-if="enableSearch">
         <div class="dataTables_filter">
           <label>Search:
-            <input type="search" class="form-control form-control-sm" placeholder="Search">
+            <input type="search" @keyup="setSearchText($event)" v-model="searchText" class="form-control form-control-sm">
           </label>
         </div>
       </div>
@@ -25,119 +22,34 @@
       <table class="table table-striped table-bordered dataTable" style="width: 100%;">
         <thead>
         <tr role="row">
-          <th class="sorting_asc" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name" >Name</th>
-          <th class="sorting" rowspan="1" colspan="1" aria-label="Position">Position</th>
-          <th class="sorting" rowspan="1" colspan="1" aria-label="Office">Office</th>
-          <th class="sorting" rowspan="1" colspan="1" aria-label="Age">Age</th>
-          <th class="sorting" rowspan="1" colspan="1" aria-label="Start Date">Start Date</th>
-          <th class="sorting" rowspan="1" colspan="1" aria-label="Salary">Salary</th>
-<!--          <th class="sorting_asc_disabled sorting_desc_disabled">Actions</th>-->
+          <th v-for="(column, index) in columns" @click="sortByColumn(column)" :key="index"
+              :class="column.name !== sortedColumn ? 'sorting' : order === 'asc' ? 'sorting_asc' : 'sorting_desc'">
+            {{ column.value }}
+          </th>
+          <th class="sorting_asc_disabled sorting_desc_disabled" v-if="actions.enabled">ACTIONS</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-          <td>Tiger Nixon</td>
-          <td>System Architect</td>
-          <td>Edinburgh</td>
-          <td>61</td>
-          <td>2011/04/25</td>
-          <td>$320,800</td>
+        <tr v-if="tableData.length === 0">
+          <td class="lead text-center" :colspan="columns.length + 1">No data available in table.</td>
         </tr>
-        <tr>
-          <td>Garrett Winters</td>
-          <td>Accountant</td>
-          <td>Tokyo</td>
-          <td>63</td>
-          <td>2011/07/25</td>
-          <td>$170,750</td>
-        </tr>
-        <tr>
-          <td>Ashton Cox</td>
-          <td>Junior Technical Author</td>
-          <td>San Francisco</td>
-          <td>66</td>
-          <td>2009/01/12</td>
-          <td>$86,000</td>
-        </tr>
-        <tr>
-          <td>Cedric Kelly</td>
-          <td>Senior Javascript Developer</td>
-          <td>Edinburgh</td>
-          <td>22</td>
-          <td>2012/03/29</td>
-          <td>$433,060</td>
-        </tr>
-        <tr>
-          <td>Airi Satou</td>
-          <td>Accountant</td>
-          <td>Tokyo</td>
-          <td>33</td>
-          <td>2008/11/28</td>
-          <td>$162,700</td>
-        </tr>
-        <tr>
-          <td>Brielle Williamson</td>
-          <td>Integration Specialist</td>
-          <td>New York</td>
-          <td>61</td>
-          <td>2012/12/02</td>
-          <td>$372,000</td>
-        </tr>
-        <tr>
-          <td>Herrod Chandler</td>
-          <td>Sales Assistant</td>
-          <td>San Francisco</td>
-          <td>59</td>
-          <td>2012/08/06</td>
-          <td>$137,500</td>
-        </tr>
-        <tr>
-          <td>Rhona Davidson</td>
-          <td>Integration Specialist</td>
-          <td>Tokyo</td>
-          <td>55</td>
-          <td>2010/10/14</td>
-          <td>$327,900</td>
-        </tr>
-        <tr>
-          <td>Colleen Hurst</td>
-          <td>Javascript Developer</td>
-          <td>San Francisco</td>
-          <td>39</td>
-          <td>2009/09/15</td>
-          <td>$205,500</td>
-        </tr>
-        <tr>
-          <td>Sonya Frost</td>
-          <td>Software Engineer</td>
-          <td>Edinburgh</td>
-          <td>23</td>
-          <td>2008/12/13</td>
-          <td>$103,600</td>
-        </tr>
-        <tr>
-          <td>Jena Gaines</td>
-          <td>Office Manager</td>
-          <td>London</td>
-          <td>30</td>
-          <td>2008/12/19</td>
-          <td>$90,560</td>
+        <tr v-else v-for="(record, index) in tableData" :key="index">
+          <td v-for="(value, key) in record" :key="key">{{ value }}</td>
+          <td v-if="actions.enabled">ACTIONS</td>
         </tr>
         </tbody>
-        <tfoot>
+        <tfoot v-if="tableFooter">
         <tr>
-          <th>Name</th>
-          <th>Position</th>
-          <th>Office</th>
-          <th>Age</th>
-          <th>Start date</th>
-          <th>Salary</th>
+          <th v-for="(column, index) in columns" :key="index">
+            {{ column.value }}
+          </th>
+          <th class="sorting_asc_disabled sorting_desc_disabled" v-if="actions.enabled">ACTIONS</th>
         </tr>
         </tfoot>
       </table>
     </div>
     <div class="row">
-      <div class="col-sm-12 col-md-5">
+      <div class="col-sm-12 col-md-5" v-if="tableData.length > 0">
         <div class="dataTables_info" role="status">
           Showing 1 to 10 of 57 entries
         </div>
@@ -145,20 +57,16 @@
       <div class="col-sm-12 col-md-7">
         <div class="dataTables_paginate paging_simple_numbers" id="example_paginate">
           <ul class="pagination">
-            <li class="paginate_button page-item previous disabled">
-              <a href="#" class="page-link">Previous</a>
+            <li class="paginate_button page-item previous"
+                :class="{'disabled' : activePage === 1}">
+              <a href="javascript:" @click.prevent="changePage(activePage - 1)" class="page-link">Previous</a>
             </li>
-            <li class="paginate_button page-item active">
-              <a href="#" class="page-link">1</a>
+            <li class="paginate_button page-item" v-for="(page, index) in pages" :key="index"
+              :class="{'active': page === pagination.meta.current_page}">
+              <a href="javascript:" @click.prevent="changePage(page)" class="page-link">{{ page }}</a>
             </li>
-            <li class="paginate_button page-item ">
-              <a href="#" class="page-link">2</a>
-            </li>
-            <li class="paginate_button page-item ">
-              <a href="#" class="page-link">3</a>
-            </li>
-            <li class="paginate_button page-item next">
-              <a href="#" class="page-link">Next</a>
+            <li class="paginate_button page-item next" :class="{'disabled': activePage === pagination.meta.last_page }">
+              <a href="javascript:" @click.prevent="changePage(activePage + 1)" class="page-link">Next</a>
             </li>
           </ul>
         </div>
@@ -168,10 +76,116 @@
 </template>
 
 <script>
-  export default {
-    name: 'DataTable',
-    props: {
-      msg: String
+    export default {
+        name: 'DataTable',
+        props: {
+            token: String,
+            fetchUrl: {type: String, required: true},
+            columns: {type: Array, required: true},
+            enableSearch: Boolean,
+            pageOption: Boolean,
+            actions: {
+                type: String,
+                enabled: Boolean,
+            },
+            tableFooter: Boolean,
+        },
+        data() {
+            return {
+                url: '',
+                tableData: [],
+                pageOptions: [
+                    10, 25, 50, 100, 125
+                ],
+                pagination: {
+                    meta: {to: 1, from: 1}
+                },
+                offset: 4,
+                perPage: 10,
+                activePage: 1,
+                sortedColumn: this.columns[0].name,
+                order: 'asc',
+                searchText: '',
+            }
+        },
+        computed: {
+            pages() {
+                if (!this.pagination.meta.to) {
+                    return []
+                }
+                let from = this.pagination.meta.current_page - this.offset;
+                if (from < 1) {
+                    from = 1
+                }
+                let to = from + (this.offset * 2);
+                if (to >= this.pagination.meta.last_page) {
+                    to = this.pagination.meta.last_page;
+                }
+                let pagesArray = [];
+                for (let page = from; page <= to; page++) {
+                    pagesArray.push(page);
+                }
+                return pagesArray;
+            },
+            totalData() {
+                return (this.pagination.meta.to - this.pagination.meta.from) + 1
+            }
+        },
+        watch: {
+            fetchUrl: {
+                handler: function (fetchUrl) {
+                    this.url = fetchUrl
+                },
+                immediate: true
+            }
+        },
+        created() {
+            return this.fetch();
+        },
+        methods: {
+            setPerPage(e) {
+                this.perPage = e.target.value;
+                this.fetch();
+            },
+            setSearchText(e) {
+                this.searchText = e.target.value;
+                this.fetch();
+            },
+            sortByColumn(column) {
+                if (column.name === this.sortedColumn) {
+                    this.order = (this.order === 'asc') ? 'desc' : 'asc';
+                } else {
+                    this.sortedColumn = column.name;
+                    this.order = 'asc';
+                }
+                this.fetch();
+            },
+            serialNumber(key) {
+                return (this.activePage - 1) * this.perPage + 1 + key
+            },
+            changePage(pageNumber) {
+                this.activePage = pageNumber;
+                this.fetch();
+            },
+            fetch() {
+                axios.defaults.headers.common["Authorization"] = this.token;
+                let dataFetchUrl = `${this.url}?page=${this.activePage}&column=${this.sortedColumn}&order=${this.order}&per_page=${this.perPage}&search=${this.searchText}`;
+                axios.get(dataFetchUrl)
+                    .then(({data}) => {
+                        this.pagination = data;
+                        this.tableData = data.data;
+                    }).catch(error => {
+                   console.log(error.response.data);
+                });
+            },
+        },
+        filters: {
+            columnHead(value) {
+                if (value === 'is_active') {
+                    return 'status'.toUpperCase();
+                }
+                return value.split('_').join(' ').toUpperCase()
+            }
+        }
     }
-  }
 </script>
